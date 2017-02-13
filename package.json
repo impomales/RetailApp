@@ -1,0 +1,25 @@
+{
+  "name": "retail_app",
+  "version": "1.0.0",
+  "description": "MEAN stack retail application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/impomales/RetailApp.git"
+  },
+  "author": "Isaias M. Pomales",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/impomales/RetailApp/issues"
+  },
+  "homepage": "https://github.com/impomales/RetailApp#readme",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-mocha": "^3.0.1",
+    "mocha": "^3.2.0",
+    "mongoose": "^4.8.2"
+  }
+}
