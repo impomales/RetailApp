@@ -17,5 +17,20 @@ var productSchema = {
     category: Category.categorySchema
 };
 
-module.exports = new mongoose.Schema(productSchema);
+var schema = new mongoose.Schema(productSchema);
+var currencySymbols = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£'
+};
+
+// human readable string of price.
+schema.virtual('displayPrice').get(function() {
+    return currencySymbols[this.price.currency] + '' + this.price.amount;
+});
+
+schema.set('toObject', {virtuals: true});
+schema.set('toJSON', {virtuals: true});
+
+module.exports = schema;
 module.exports.productSchema = productSchema;

@@ -31,6 +31,11 @@ var product = new Product({
     category: category
 });
 
+product.price.amount = 1;
+console.log(product.displayPrice);
+
+console.log(JSON.stringify(product));
+
 product.save(function(err) {
     if (err) {
         console.error(err);
