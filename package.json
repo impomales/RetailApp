@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/impomales/RetailApp#readme",
   "dependencies": {
+    "express": "^4.14.1",
     "gulp": "^3.9.1",
     "gulp-mocha": "^3.0.1",
     "mocha": "^3.2.0",
