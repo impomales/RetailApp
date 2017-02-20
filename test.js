@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var categorySchema = require('./schemas/category');
 var productSchema = require('./schemas/product');
 var userSchema = require('./schemas/user');
+var superagent = require('superagent');
 
 /* will add more tests later */
 
