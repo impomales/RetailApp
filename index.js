@@ -1,4 +1,11 @@
-var server = require('./server');
+var express = require('express');
+var wagner = require('wagner-core');
 
-server().listen(process.env.PORT);
-console.log('Server listening on port ' + process.env.PORT + '!');
+require('./models')(wagner);
+
+var app = express();
+
+app.use('/api/v1', require('./utils/api')(wagner));
+
+app.listen(process.env.PORT);
+console.log("listening on port " + process.env.PORT);

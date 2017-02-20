@@ -19,11 +19,14 @@
   "homepage": "https://github.com/impomales/RetailApp#readme",
   "dependencies": {
     "express": "^4.14.1",
-    "gulp": "^3.9.1",
-    "gulp-mocha": "^3.0.1",
-    "mocha": "^3.2.0",
+    "http-status": "^1.0.1",
     "mongoose": "^4.8.2",
-    "superagent": "^3.4.4",
     "wagner-core": "^0.2.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-mocha": "^4.0.1",
+    "mocha": "^3.2.0",
+    "superagent": "^3.4.4"
   }
 }
