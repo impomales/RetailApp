@@ -23,6 +23,7 @@
     "gulp-mocha": "^3.0.1",
     "mocha": "^3.2.0",
     "mongoose": "^4.8.2",
-    "superagent": "^3.4.4"
+    "superagent": "^3.4.4",
+    "wagner-core": "^0.2.0"
   }
 }
