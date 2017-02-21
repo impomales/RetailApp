@@ -5,7 +5,10 @@ require('./models')(wagner);
 
 var app = express();
 
-app.use('/api/v1', require('./utils/api')(wagner));
+app.get('/', function(req, res) {
+    res.send('hello...');
+});
+app.use('/api/v1', require('./api')(wagner));
 
 app.listen(process.env.PORT);
 console.log("listening on port " + process.env.PORT);
