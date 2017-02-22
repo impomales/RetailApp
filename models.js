@@ -15,7 +15,7 @@ module.exports = function(wagner) {
     _.each(models, function(value, key) {
         wagner.factory(key, function() {
             return value;
-        });   
+        });
     });
     
     return models;

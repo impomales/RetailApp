@@ -126,3 +126,7 @@ describe('Category API', function() {
         });
     });
 });
+
+describe('Product Api', function() {
+    
+});
