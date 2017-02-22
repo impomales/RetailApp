@@ -21,6 +21,7 @@
     "express": "^4.14.1",
     "http-status": "^1.0.1",
     "mongoose": "^4.8.2",
+    "underscore": "^1.8.3",
     "wagner-core": "^0.2.0"
   },
   "devDependencies": {
