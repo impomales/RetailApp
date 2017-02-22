@@ -59,9 +59,10 @@ describe('server', function() {
     });
 });
 
-describe('Category API', function() {
+describe('API', function() {
     var server;
     var Category;
+    var Product;
     
     before(function() {
         app = express();
@@ -70,6 +71,7 @@ describe('Category API', function() {
         
         server = app.listen(process.env.PORT);
         Category = models.Category;
+        Product = models.Product;
     });
     
     after(function() {
@@ -77,9 +79,16 @@ describe('Category API', function() {
     });
     
     beforeEach(function(done) {
+        var wait = true;
         Category.remove({}, function(err) {
             assert.ifError(err);
-            done();
+            if (!wait) done();
+            wait = false;
+        });
+        Product.remove({},function(err) {
+            assert.ifError(err);
+            if (!wait) done();
+            wait = false;
         });
     });
     
@@ -125,8 +134,33 @@ describe('Category API', function() {
            });
         });
     });
+    
+    it('can load a product by id', function(done) {
+        var PRODUCT_ID = '000000000000000000000001';
+        var product = {
+            name: 'LG G4',
+            _id: PRODUCT_ID,
+            price: {
+                amount: 300,
+                currency: 'USD'
+            }
+        };
+        
+        Product.create(product, function(err, doc) {
+            assert.ifError(err);
+            var url = url_root + 'product/id/' + PRODUCT_ID;
+            superagent.get(url, function(err, res) {
+                assert.ifError(err);
+                var result;
+                assert.doesNotThrow(function() {
+                    result = JSON.parse(res.text);
+                });
+                assert.ok(result.product);
+                assert.equal(result.product._id, PRODUCT_ID);
+                assert.equal(result.product.name, 'LG G4');
+                done();
+            });
+        });
+    });
 });
 
-describe('Product Api', function() {
-    
-});
