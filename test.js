@@ -162,5 +162,70 @@ describe('API', function() {
             });
         });
     });
+    
+    it('can load all products in a category with sub-categories', function(done) {
+        var categories = [
+            { _id: 'Electronics' },
+            { _id: 'Phones', parent: 'Electronics' },
+            { _id: 'Laptops', parent: 'Electronics'},
+            { _id: 'Pancakes' }
+        ];
+        var products = [
+            {
+                name: 'LG G4',
+                category: { _id: 'Phones', ancestors: ['Electronics', 'Phones'] },
+                price: {
+                    amount: 300,
+                    currency: 'USD'
+                }
+            },
+            {
+                name: 'Asus Zenbook Prime',
+                category: { _id: 'Laptops', ancestors: ['Electronics', 'Laptops'] },
+                price: {
+                    amount: 2000,
+                    currency: 'USD'
+                }
+            },
+            {
+                name: 'Red Velvet Pancakes',
+                category: { _id: 'Pancakes', ancestors: ['Pancakes'] },
+                price: {
+                    amount: 20,
+                    currency: 'USD'
+                }
+            }
+        ];
+        Category.create(categories, function(err, categories) {
+            assert.ifError(err);
+            Product.create(products, function(err, products) {
+                assert.ifError(err);
+                var url = url_root + 'product/category/Electronics';
+                superagent.get(url, function(err, res) {
+                    assert.ifError(err);
+                    var result;
+                    assert.doesNotThrow(function() {
+                        result = JSON.parse(res.text);
+                    });
+                    assert.equal(result.products.length, 2);
+                    assert.equal(result.products[0].name, 'Asus Zenbook Prime');
+                    assert.equal(result.products[1].name, 'LG G4');
+                    
+                    var url = url_root + 'product/category/Electronics?price=1';
+                    superagent.get(url, function(err, res) {
+                        assert.ifError(err);
+                        var result;
+                        assert.doesNotThrow(function() {
+                            result = JSON.parse(res.text);
+                        })
+                        assert.equal(result.products.length, 2);
+                        assert.equal(result.products[0].name, 'LG G4');
+                        assert.equal(result.products[1].name, 'Asus Zenbook Prime');
+                        done();
+                    });
+                });
+            });
+        });
+    });
 });
 
