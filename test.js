@@ -247,8 +247,33 @@ describe('API', function() {
                     assert.equal(user.data.cart[0].product, PRODUCT_ID);
                     assert.equal(user.data.cart[0].quantity, 1);
                     done();
+                });
+            });
+    });
+    
+    it('can load users cart', function(done) {
+        var url = url_root + 'me';
+        
+        User.findOne({}, function(err, user) {
+            assert.ifError(err);
+            user.data.cart = [{product: PRODUCT_ID, quantity: 1 }];
+            user.save(function(err) {
+                assert.ifError(err);
+                
+                superagent.get(url, function(err, res) {
+                    assert.ifError(err);
+                    assert.equal(res.status, status.OK);
+                    var result;
+                    assert.doesNotThrow(function() {
+                        result = JSON.parse(res.text).user;
+                    });
+                    
+                    assert.equal(result.data.cart.length, 1);
+                    assert.equal(result.data.cart[0].product.name, 'LG G4');
+                    assert.equal(result.data.cart[0].quantity, 1);
+                    done();
                 })
             })
+        })
     });
 });
-
