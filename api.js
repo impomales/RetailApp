@@ -6,7 +6,7 @@ module.exports = function(wagner) {
     var api = express.Router();
     api.use(bodyparser.json());
     
-    // modify user cart.
+    // modify currently logged in user cart.
     api.put('/me/cart', wagner.invoke(function(User) {
         return function(req, res) {
             try {
@@ -25,9 +25,23 @@ module.exports = function(wagner) {
                             json({ error: err.toString() });
                 }
                 return res.json({ user: user });
-            })
+            });
         };
     }));
+    
+    // get currently logged in user.
+    api.get('/me', function(req, res) {
+        if (!req.user) {
+            return res.
+                    status(status.UNAUTHORIZED).
+                    json({ error: 'Not logged in' });
+        }
+        // behaves like a superficial join
+        // gets all products that are in user cart.
+        req.user.populate(
+            { path: 'data.cart.product', model: 'Product' },
+            handleOne.bind(null, 'user', res));
+    });
     
     // get product by id.
     api.get('/product/id/:id', wagner.invoke(function(Product) {
