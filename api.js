@@ -1,9 +1,35 @@
 var express = require('express');
 var status = require('http-status');
+var bodyparser = require('body-parser');
 
 module.exports = function(wagner) {
     var api = express.Router();
+    api.use(bodyparser.json());
     
+    // modify user cart.
+    api.put('/me/cart', wagner.invoke(function(User) {
+        return function(req, res) {
+            try {
+                var cart = req.body.data.cart;
+            } catch(e) {
+                return res.
+                        status(status.BAD_REQUEST).
+                        json({ error: 'no cart specified!' });
+            }
+            
+            req.user.data.cart = cart;
+            req.user.save(function(err, user) {
+                if (err) {
+                    return res.
+                            status(status.INTERNAL_SERVER_ERROR).
+                            json({ error: err.toString() });
+                }
+                return res.json({ user: user });
+            })
+        };
+    }));
+    
+    // get product by id.
     api.get('/product/id/:id', wagner.invoke(function(Product) {
         return function(req, res) {
             Product.findOne({ _id: req.params.id }, 
@@ -11,6 +37,7 @@ module.exports = function(wagner) {
         };
     }));
     
+    // get products by category.
     api.get('/product/category/:id', wagner.invoke(function(Product) {
         return function(req, res) {
             var sort = { name: 1 };
@@ -24,6 +51,7 @@ module.exports = function(wagner) {
         };
     }));
     
+    // get category by id.
     api.get('/category/id/:id', wagner.invoke(function(Category) {
         return function(req, res) {
             Category.findOne({ _id: req.params.id }, 
@@ -31,6 +59,7 @@ module.exports = function(wagner) {
         };
     }));
     
+    // get categories by parent.
     api.get('/category/parent/:id', wagner.invoke(function(Category) {
         return function(req, res) {
             Category.
@@ -50,6 +79,7 @@ module.exports = function(wagner) {
     return api;
 };
 
+// handles one result from request to server. 
 function handleOne(property, res, error, result) {
     if (error) {
         return res.
@@ -67,6 +97,7 @@ function handleOne(property, res, error, result) {
     res.json(json);
 }
 
+// handles many results from request to server.
 function handleMany(property, res, error, results) {
     if (error) {
         return res.
