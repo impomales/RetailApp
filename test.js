@@ -4,7 +4,6 @@ var express = require('express');
 var categorySchema = require('./schemas/category');
 var productSchema = require('./schemas/product');
 var superagent = require('superagent');
-var app = require('./server');
 var status = require('http-status');
 var wagner = require('wagner-core');
 var url_root = 'http://' + process.env.IP + ':' + process.env.PORT + '/';
@@ -34,28 +33,6 @@ describe('Mongoose Schemas', function() {
         });        
         it('has a "displayPrice" virtual', function() {
             assert.equal(product.displayPrice, '$999.99');
-        });
-    });
-});
-
-//server tests.
-describe('server', function() {
-    var server;
-    
-    beforeEach(function() {
-        server = app().listen(process.env.PORT);
-    });
-    
-    afterEach(function() {
-        server.close();
-    });
-    
-    it('prints out "hello...it\'s me" when user goes to /', function(done) {
-        superagent.get('http://' + process.env.IP + ':' + process.env.PORT + '/', function(err, res) {
-            assert.ifError(err);
-            assert.equal(res.status.OK);
-            assert.equal(res.text, "hello...it's me");
-            done();
         });
     });
 });
