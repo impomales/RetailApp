@@ -38,15 +38,19 @@ describe('Mongoose Schemas', function() {
 });
 
 describe('API', function() {
+    var app;
     var server;
     var Category;
     var Product;
     var User;
     var PRODUCT_ID = '000000000000000000000001';
+    var Stripe;
     
     before(function() {
         app = express();
+        require('dotenv').load();
         models = require('./models')(wagner);
+        Stripe = require('./dependencies')(wagner).Stripe;
         
         Category = models.Category;
         Product = models.Product;
@@ -57,7 +61,7 @@ describe('API', function() {
                 assert.ifError(err);
                 req.user = user;
                 next();
-            })
+            });
         });
         
         app.use(require('./api')(wagner));
@@ -197,7 +201,7 @@ describe('API', function() {
                 var result;
                 assert.doesNotThrow(function() {
                     result = JSON.parse(res.text);
-                })
+                });
                 assert.equal(result.products.length, 2);
                 assert.equal(result.products[0].name, 'LG G4');
                 assert.equal(result.products[1].name, 'Asus Zenbook Prime');
@@ -249,8 +253,54 @@ describe('API', function() {
                     assert.equal(result.data.cart[0].product.name, 'LG G4');
                     assert.equal(result.data.cart[0].quantity, 1);
                     done();
-                })
-            })
-        })
+                });
+            });
+        });
+    });
+    
+    it('can check out', function(done) {
+        var url = url_root + 'checkout';
+        
+        // set up data.
+        User.findOne({}, function(err, user) {
+            assert.ifError(err);
+            user.data.cart = [{product: PRODUCT_ID, quantity: 1}];
+            user.save(function(err) {
+                assert.ifError(err);
+            });
+            
+            // attempt checkout.
+            superagent.
+                post(url).
+                send({
+                    // fake stripe credentials.
+                    stripeToken: {
+                        number: '4242424242424242',
+                        cvc: '123',
+                        exp_month: '12',
+                        exp_year: '2018'
+                    }
+                }).
+                end(function(err, res) {
+                    assert.ifError(err);
+                    assert.equal(res.status, 200);
+                    
+                    var result;
+                    assert.doesNotThrow(function() {
+                        result = JSON.parse(res.text);
+                    });
+                    
+                    // api call gives back a charge id.
+                    assert.ok(result.id);
+                    
+                    // check that Stripe has the id.
+                    Stripe.charges.retrieve(result.id, function(err, charge) {
+                        assert.ifError(err);
+                        assert.ok(charge);
+                        assert.equal(charge.amount, 300 * 100);
+                        done();
+                    });
+                });
+        });
     });
 });
