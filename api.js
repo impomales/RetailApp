@@ -1,10 +1,63 @@
 var express = require('express');
 var status = require('http-status');
 var bodyparser = require('body-parser');
+var _ = require('underscore');
 
 module.exports = function(wagner) {
     var api = express.Router();
     api.use(bodyparser.json());
+    
+    //checkout
+    api.post('/checkout', wagner.invoke(function(User, Stripe) {
+        return function(req, res) {
+            if (!req.user) {
+                return res.
+                    status(status.UNAUTHORIZED).
+                    json({error: 'Not logged in'});
+            }
+            
+            // populate products in user's cart.
+            req.user.populate({path: 'data.cart.product', model: 'Product'}, function(err, user) {
+                if (err) throw new err('error in populating user cart');
+                
+                // sum total price in USD.
+                var totalCostUSD = 0;
+                _.each(user.data.cart, function(item) {
+                    totalCostUSD += item.product.internal.approximatePriceUSD * item.quantity;
+                });
+                
+                // create charge in Stripe corresponding to price.
+                Stripe.charges.create(
+                    {
+                        // price in cents, mult by 100 and ceiling.
+                        amount: Math.ceil(totalCostUSD * 100),
+                        currency: 'usd',
+                        source: req.body.stripeToken,
+                        description: 'example charge'
+                    },
+                    function(err, charge) {
+                        if (err && err.type ==='StripeCardError') {
+                            return res.
+                                status(status.BAD_REQUEST).
+                                json({error: err.toString()});
+                        }
+                        if (err) {
+                            console.log(err);
+                            return res.
+                                status(status.INTERNAL_SERVER_ERROR).
+                                json({error: err.toString()});
+                        }
+                        
+                        req.user.data.cart = [];
+                        req.user.save(function() {
+                            // ignore error of user cart. (not necessarily a failure)
+                            return res.json({id: charge.id});
+                        });
+                    }
+                );
+            });
+        };
+    }));
     
     // modify currently logged in user cart.
     api.put('/me/cart', wagner.invoke(function(User) {
