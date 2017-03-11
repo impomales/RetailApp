@@ -258,6 +258,25 @@ describe('API', function() {
         });
     });
     
+    it('can search by text', function(done) {
+       var url = url_root + 'product/text/lg';
+       
+       superagent.get(url, function(err, res) {
+           assert.ifError(err);
+           assert.equal(res.status, status.OK);
+           
+           var results;
+           assert.doesNotThrow(function() {
+               results = JSON.parse(res.text).products;
+           });
+           
+           assert.equal(results.length, 1);
+           assert.equal(results[0]._id, PRODUCT_ID);
+           assert.equal(results[0].name, 'LG G4');
+           done();
+       });
+    });
+    
     it('can check out', function(done) {
         var url = url_root + 'checkout';
         
