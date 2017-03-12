@@ -8,35 +8,6 @@ var status = require('http-status');
 var wagner = require('wagner-core');
 var url_root = 'http://' + process.env.IP + ':' + process.env.PORT + '/';
 
-var models;
-
-/* will add more tests later */
-// schema tests.
-describe('Mongoose Schemas', function() {
-    var Category = mongoose.model('Category', categorySchema, 'categories');
-    var Product = mongoose.model('Product', productSchema, 'products');
-    
-    describe('Product', function() {
-        var category = new Category({
-            _id: 'Electronics',
-            parent: '',
-            ancestors: []
-        });
-        var product = new Product({
-            name: 'iphone',
-            pictures: ['http://support.apple.com/content/dam/edam/applecare/images/en_US/iphone/featured-content-iphone-transfer-content-ios10_2x.png'],
-            price: {
-                amount: 999.99,
-                currency: 'USD'
-            },
-            category: category
-        });        
-        it('has a "displayPrice" virtual', function() {
-            assert.equal(product.displayPrice, '$999.99');
-        });
-    });
-});
-
 describe('API', function() {
     var app;
     var server;
@@ -49,12 +20,22 @@ describe('API', function() {
     before(function() {
         app = express();
         require('dotenv').load();
-        models = require('./models')(wagner);
-        Stripe = require('./dependencies')(wagner).Stripe;
+        require('./dependencies')(wagner);
+        require('./models')(wagner);
         
-        Category = models.Category;
-        Product = models.Product;
-        User = models.User;
+        var deps = wagner.invoke(function(Category, Product, Stripe, User) {
+            return {
+                Category: Category,
+                Product: Product,
+                Stripe: Stripe,
+                User: User
+            };
+        });
+        
+        Category = deps.Category;
+        Product = deps.Product;
+        Stripe = deps.Stripe;
+        User = deps.User;
         
         app.use(function(req, res, next) {
             User.findOne({}, function(err, user) {

@@ -1,11 +1,12 @@
 var express = require('express');
 var wagner = require('wagner-core');
 
+require('dotenv').load();
+
 require('./models')(wagner);
 require('./dependencies')(wagner);
 
 var app = express();
-require('dotenv').load();
 
 app.get('/', function(req, res) {
     res.send('hello...');
