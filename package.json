@@ -4,8 +4,10 @@
   "description": "MEAN stack retail application.",
   "main": "index.js",
   "scripts": {
+    "browserify": "gulp --gulpfile ./static/gulpfile.js browserify",
+    "sass": "sass ./static/css/main.scss ./static/css/main.css",
     "test": "gulp test",
-    "test-angular": "karma start karma.local.conf.js",
+    "karma": "karma start ./static/karma.local.conf.js",
     "watch": "gulp watch"
   },
   "repository": {
@@ -33,8 +35,10 @@
     "wagner-core": "^0.2.0"
   },
   "devDependencies": {
+    "browserify": "^14.1.0",
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
     "gulp-mocha": "^4.0.1",
     "karma": "^1.5.0",
     "karma-chai": "^0.1.0",

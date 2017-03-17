@@ -8,10 +8,6 @@ require('./dependencies')(wagner);
 
 var app = express();
 
-app.get('/', function(req, res) {
-    res.send('hello...');
-});
-
 wagner.invoke(require('./auth'), {app: app});
 app.use('/api/v1', require('./api')(wagner));
 

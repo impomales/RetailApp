@@ -3,7 +3,7 @@ var _ = require('underscore');
 
 module.exports = function() {
     var url = 'http://openexchangerates.org/api/latest.json?app_id=' + process.env.OPEN_EXCHANGE_KEY;
-
+    
     var rates = {
         USD: 1,
         EUR: 1.1,

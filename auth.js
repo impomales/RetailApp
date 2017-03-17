@@ -48,12 +48,25 @@ function setupAuth(User, app) {
     app.use(passport.initialize());
     app.use(passport.session());
     
-    app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']}));
-    app.get('/auth/facebook/callback',
-        passport.authenticate('facebook', {failureRedirect: '/fail'}),
-        function(req, res) {
-            res.send('Welcome, ' + req.user.profile.username);
-        });
+    app.get('/auth/facebook', function(req, res, next) {
+        var redirect = encodeURIComponent(req.query.redirect || '/');
+        
+        passport.authenticate('facebook', {
+            scope: ['email'],
+            callbackURL: process.env.APP_URL + '/auth/facebook/callback?redirect=' + redirect
+        })(req, res, next);
+    });
+    // redirect appends weird chars.
+    app.get('/auth/facebook/callback', function(req, res, next) {
+        var redirect = encodeURIComponent(req.query.redirect || '/');
+        var url = process.env.APP_URL + '/auth/facebook/callback?redirect=' + redirect;
+        
+        passport.authenticate('facebook', {
+            callbackURL: url
+        })(req, res, next);
+    }, function(req, res) {
+        res.redirect(req.query.redirect);
+    });
 }
 
 module.exports = setupAuth;
