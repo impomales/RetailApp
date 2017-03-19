@@ -4,3 +4,10 @@ exports.userMenu = function() {
         templateUrl: '/templates/user_menu.html'
     };
 };
+
+exports.productDetails = function() {
+    return {
+        controller: 'ProductDetailsController',
+        templateUrl: '/templates/product_details.html'
+    };
+};

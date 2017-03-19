@@ -1681,11 +1681,32 @@ exports.UserMenuController = function($scope, $user) {
         $scope.$emit('UserMenuController');
     }, 0);
 };
+
+exports.ProductDetailsController = function($scope, $routeParams, $http) {
+    var encoded = encodeURIComponent($routeParams.id);
+    console.log($routeParams);
+    $http.
+        get('/api/v1/product/id/' + encoded).
+        success(function(data) {
+            $scope.product = data.product;
+        });
+        
+        setTimeout(function()  {
+            $scope.$emit('ProductDetailsContoller');
+        }, 0);
+};
 },{}],4:[function(require,module,exports){
 exports.userMenu = function() {
     return {
         controller: 'UserMenuController',
         templateUrl: '/templates/user_menu.html'
+    };
+};
+
+exports.productDetails = function() {
+    return {
+        controller: 'ProductDetailsController',
+        templateUrl: '/templates/product_details.html'
     };
 };
 },{}],5:[function(require,module,exports){
@@ -1694,18 +1715,27 @@ var directives = require('./directives');
 var services = require('./services');
 var _ = require('underscore');
 
-var app = angular.module('mean-retail', ['ng']);
+var components = angular.module('mean-retail.components', ['ng']);
 
 _.each(controllers, function(controller, name) {
-    app.controller(name, controller);
+    components.controller(name, controller);
 });
 
 _.each(directives, function(directive, name) {
-    app.directive(name, directive);
+    components.directive(name, directive);
 });
 
 _.each(services, function(factory, name) {
-    app.factory(name, factory);
+    components.factory(name, factory);
+});
+
+var app = angular.module('mean-retail', ['mean-retail.components', 'ngRoute']);
+
+app.config(function($routeProvider) {
+    $routeProvider.
+        when('/product/:id', {
+            template: '<product-details></product-details>'
+        });
 });
 },{"./controllers":3,"./directives":4,"./services":6,"underscore":2}],6:[function(require,module,exports){
 var status = require('http-status');
