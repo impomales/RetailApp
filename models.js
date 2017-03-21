@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var _ = require('underscore');
 
 module.exports = function(wagner) {
-    mongoose.connect('mongodb://' + process.env.IP + ':27017/test');
+    mongoose.connect('mongodb://imp88:izzi1231@ds137220.mlab.com:37220/retail_app');
     
     wagner.factory('db', function() {
         return mongoose;
