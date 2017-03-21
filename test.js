@@ -278,7 +278,7 @@ describe('API', function() {
                         number: '4242424242424242',
                         cvc: '123',
                         exp_month: '12',
-                        exp_year: '2018'
+                        exp_year: '2020'
                     }
                 }).
                 end(function(err, res) {

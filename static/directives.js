@@ -1,3 +1,17 @@
+exports.checkout = function() {
+    return {
+        controller: 'CheckoutController',
+        templateUrl: '/templates/checkout.html'
+    }
+}
+
+exports.addToCart = function() {
+    return {
+        controller: 'AddToCartController',
+        templateUrl: '/templates/add_to_cart.html'
+    };
+};
+
 exports.categoryProducts = function() {
     return {
         controller: 'CategoryProductsController',

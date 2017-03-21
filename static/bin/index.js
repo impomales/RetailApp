@@ -1743,7 +1743,77 @@ exports.CategoryProductsController = function($scope, $routeParams, $http) {
         $scope.$emit('CategoryProductsController');
     }, 0);
 };
+
+exports.AddToCartController = function($scope, $http, $user, $timeout) {
+  $scope.addToCart = function(product) {
+      var obj = {product: product._id, quantity: 1};
+      $user.user.data.cart.push(obj);
+      
+      $http.
+        put('/api/v1/me/cart', {data: {cart: $user.user.data.cart}}).
+        success(function(data) {
+            $user.loadUser();
+            $scope.success = true;
+            
+            $timeout(function() {
+                $scope.success = false;
+            }, 5000);
+        });
+  };
+};
+
+exports.CheckoutController = function($scope, $user, $http) {
+  $scope.user = $user;
+  
+  $scope.updateCart = function() {
+      $http.
+        put('/api/v1/me/cart', $user.user).
+        success(function(data) {
+            $scope.updated = true;
+        });
+  };
+  
+  Stripe.setPublishableKey('pk_test_ThDZw2aCJez2ncEmHGbBBwCD');
+  
+  $scope.stripeToken = {
+      number: '4242424242424242',
+      cvc: '123',
+      exp_month:'12',
+      exp_year: '2020'
+  };
+  
+  $scope.checkout = function() {
+    $scope.error = null;
+    Stripe.card.createToken($scope.stripeToken, function(status, response) {
+        if (status.error) {
+            $scope.error = status.error;
+            return;
+        }
+        
+        $http.
+            post('/api/v1/checkout', {stripeToken: response.id}).
+            success(function(data) {
+                $scope.checkedOut = true;
+                $user.user.data.cart = [];
+            });
+    });
+  };
+};
 },{}],4:[function(require,module,exports){
+exports.checkout = function() {
+    return {
+        controller: 'CheckoutController',
+        templateUrl: '/templates/checkout.html'
+    }
+}
+
+exports.addToCart = function() {
+    return {
+        controller: 'AddToCartController',
+        templateUrl: '/templates/add_to_cart.html'
+    };
+};
+
 exports.categoryProducts = function() {
     return {
         controller: 'CategoryProductsController',
@@ -1795,6 +1865,9 @@ var app = angular.module('mean-retail', ['mean-retail.components', 'ngRoute']);
 
 app.config(function($routeProvider) {
     $routeProvider.
+        when('/checkout', {
+            template: '<checkout></checkout>'
+        }).
         when('/category/:category', {
             templateUrl: '/templates/category_view.html'
         }).
