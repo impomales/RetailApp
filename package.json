@@ -4,7 +4,7 @@
   "description": "MEAN stack retail application.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
     "browserify": "gulp --gulpfile ./static/gulpfile.js browserify",
     "sass": "sass ./static/css/main.scss ./static/css/main.css",
     "test": "gulp test",
