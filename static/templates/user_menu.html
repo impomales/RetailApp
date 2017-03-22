@@ -15,6 +15,11 @@
             <div class='user' ng-show='user.user'>
                 <img ng-src='{{user.user.profile.picture}}' alt='profile-pic' />
             </div>
+            <div class='button'>
+                <a ng-href='#/category/Books'>
+                    Click here to see all Books
+                </a>
+            </div>
             <div class='login' ng-show='!user.user'>
                 <a href='/auth/facebook?redirect=/'>
                     <img src='//i.stack.imgur.com/LKMP7.png'>
