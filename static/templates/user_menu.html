@@ -4,7 +4,7 @@
             <img src='/img/mean-retail-logo.png' alt='logo' />
         </div>
         <div class='title'>
-            <a ng-href='/'>MEAN Retail</a>
+            <a ng-href='#/category/Books'>MEAN Retail</a>
         </div>
         <div class='user-info'>
             <div class='checkout' ng-show='user.user'>
@@ -16,7 +16,7 @@
                 <img ng-src='{{user.user.profile.picture}}' alt='profile-pic' />
             </div>
             <div class='login' ng-show='!user.user'>
-                <a href='/auth/facebook?redirect=/#/category/Books'>
+                <a href='/auth/facebook?redirect=#/category/Books'>
                     <img src='//i.stack.imgur.com/LKMP7.png'>
                 </a>
             </div>
