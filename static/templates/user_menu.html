@@ -6,6 +6,11 @@
         <div class='title'>
             <a ng-href='/'>MEAN Retail</a>
         </div>
+        <div class='button' ng-show='user.user'>
+            <a ng-href='#/category/Books'>
+                Click here to see all Books
+            </a>
+        </div>
         <div class='user-info'>
             <div class='checkout' ng-show='user.user'>
                 <a ng-href='#/checkout'>
@@ -14,11 +19,6 @@
             </div>
             <div class='user' ng-show='user.user'>
                 <img ng-src='{{user.user.profile.picture}}' alt='profile-pic' />
-            </div>
-            <div class='button'>
-                <a ng-href='#/category/Books'>
-                    Click here to see all Books
-                </a>
             </div>
             <div class='login' ng-show='!user.user'>
                 <a href='/auth/facebook?redirect=/'>
